@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Div Guy — Learn to Code, The Cool Way</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Syne:wght@400;700;800;900&family=Syne+Mono&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0a0d0f;
+  --bg2: #0f1318;
+  --green: #00ff9d;
+  --green2: #00cc7a;
+  --blue: #00cfff;
+  --yellow: #ffe234;
+  --white: #f0f4f8;
+  --muted: #4a5568;
+  --card: #12181f;
+  --border: rgba(0,255,157,0.12);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: 'Syne', sans-serif;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* Custom cursor */
+.cursor {
+  width: 12px; height: 12px;
+  background: var(--green);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  transition: transform 0.15s ease;
+  mix-blend-mode: difference;
+}
+.cursor-ring {
+  width: 36px; height: 36px;
+  border: 1px solid var(--green);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9998;
+  transition: all 0.1s ease;
+  opacity: 0.5;
+}
+
+/* Grid background */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(rgba(0,255,157,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,255,157,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Scanline effect */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.03) 2px,
+    rgba(0,0,0,0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ══ NAV ══ */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.2rem 2.5rem;
+  background: rgba(10,13,15,0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: var(--green);
+  letter-spacing: -0.02em;
+}
+.nav-logo span { color: var(--white); }
+.nav-links { display: flex; gap: 2rem; list-style: none; }
+.nav-links a {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--muted);
+  text-decoration: none;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--green); }
+.nav-cta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  padding: 0.5rem 1.2rem;
+  background: transparent;
+  border: 1px solid var(--green);
+  color: var(--green);
+  border-radius: 2px;
+  cursor: none;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: all 0.2s;
+}
+.nav-cta:hover { background: var(--green); color: var(--bg); }
+
+/* ══ HERO ══ */
+.hero {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 2rem;
+  padding: 7rem 5vw 4rem;
+  position: relative;
+  z-index: 2;
+}
+
+.hero-text { max-width: 560px; }
+
+.hero-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--green);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.hero-tag::before {
+  content: '';
+  display: inline-block;
+  width: 20px; height: 2px;
+  background: var(--green);
+}
+
+h1 {
+  font-size: clamp(2.8rem, 5.5vw, 5rem);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  margin-bottom: 1.5rem;
+}
+h1 .accent { color: var(--green); }
+h1 .line2 { 
+  -webkit-text-stroke: 1px rgba(240,244,248,0.4);
+  color: transparent;
+}
+
+.hero-desc {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: rgba(240,244,248,0.55);
+  margin-bottom: 2.5rem;
+  max-width: 420px;
+}
+
+.hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+.btn-primary {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82rem;
+  padding: 0.9rem 2rem;
+  background: var(--green);
+  color: var(--bg);
+  border: none;
+  border-radius: 2px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: none;
+  transition: all 0.2s;
+  text-decoration: none;
+  display: inline-block;
+}
+.btn-primary:hover { background: var(--green2); transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,255,157,0.25); }
+.btn-ghost {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82rem;
+  padding: 0.9rem 2rem;
+  background: transparent;
+  color: var(--white);
+  border: 1px solid rgba(240,244,248,0.15);
+  border-radius: 2px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  cursor: none;
+  transition: all 0.2s;
+  text-decoration: none;
+  display: inline-block;
+}
+.btn-ghost:hover { border-color: var(--white); }
+
+/* ══ STICKMAN STAGE ══ */
+.hero-stage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  min-height: 480px;
+}
+
+.stage-glow {
+  position: absolute;
+  width: 350px; height: 350px;
+  background: radial-gradient(circle, rgba(0,255,157,0.08) 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+.stickman-wrap {
+  position: relative;
+  animation: float 4s ease-in-out infinite;
+  z-index: 2;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-14px); }
+}
+
+.stickman-img {
+  width: 340px;
+  max-width: 90vw;
+  filter: drop-shadow(0 0 30px rgba(0,255,157,0.2)) drop-shadow(0 20px 40px rgba(0,0,0,0.5));
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+@keyframes glow-pulse {
+  0%, 100% { filter: drop-shadow(0 0 20px rgba(0,255,157,0.15)) drop-shadow(0 20px 40px rgba(0,0,0,0.5)); }
+  50% { filter: drop-shadow(0 0 40px rgba(0,255,157,0.35)) drop-shadow(0 20px 40px rgba(0,0,0,0.5)); }
+}
+
+/* ══ SPEECH BUBBLE ══ */
+.speech-bubble {
+  position: absolute;
+  top: -20px;
+  right: -30px;
+  background: var(--card);
+  border: 1px solid var(--green);
+  border-radius: 12px 12px 12px 0;
+  padding: 0.9rem 1.1rem;
+  max-width: 220px;
+  box-shadow: 0 0 20px rgba(0,255,157,0.15), 0 8px 30px rgba(0,0,0,0.4);
+  animation: bubble-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  z-index: 10;
+}
+.speech-bubble::before {
+  content: '';
+  position: absolute;
+  bottom: -10px; left: 14px;
+  border-left: 10px solid transparent;
+  border-right: 0px solid transparent;
+  border-top: 10px solid var(--green);
+}
+.speech-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -8px; left: 15px;
+  border-left: 9px solid transparent;
+  border-right: 0px solid transparent;
+  border-top: 9px solid var(--card);
+}
+
+@keyframes bubble-in {
+  from { opacity: 0; transform: scale(0.7) translateY(10px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.bubble-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--white);
+}
+.bubble-text .highlight { color: var(--green); font-weight: 700; }
+.bubble-text .code-inline {
+  background: rgba(0,255,157,0.1);
+  color: var(--green);
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  font-size: 0.72rem;
+}
+.bubble-cursor {
+  display: inline-block;
+  width: 2px; height: 12px;
+  background: var(--green);
+  margin-left: 2px;
+  vertical-align: middle;
+  animation: blink 1s step-end infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* ══ FLOATING CODE TAGS ══ */
+.float-tag {
+  position: absolute;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  color: rgba(0,255,157,0.4);
+  pointer-events: none;
+  animation: drift 8s ease-in-out infinite;
+}
+.float-tag:nth-child(1) { top: 10%; left: 5%; animation-delay: 0s; }
+.float-tag:nth-child(2) { top: 70%; left: 2%; animation-delay: 2s; }
+.float-tag:nth-child(3) { top: 30%; right: 3%; animation-delay: 1s; }
+.float-tag:nth-child(4) { top: 80%; right: 5%; animation-delay: 3s; }
+@keyframes drift {
+  0%, 100% { transform: translateY(0) rotate(-2deg); opacity: 0.3; }
+  50% { transform: translateY(-20px) rotate(2deg); opacity: 0.6; }
+}
+
+/* ══ STATS BAR ══ */
+.stats-bar {
+  position: relative; z-index: 2;
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: rgba(0,255,157,0.02);
+  padding: 1.8rem 2rem;
+  flex-wrap: wrap;
+}
+.stat-item {
+  text-align: center;
+  padding: 0 3rem;
+  border-right: 1px solid var(--border);
+}
+.stat-item:last-child { border-right: none; }
+.stat-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--green);
+  display: block;
+  line-height: 1;
+  margin-bottom: 0.3rem;
+}
+.stat-label {
+  font-size: 0.72rem;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* ══ TOPICS SECTION ══ */
+.section {
+  position: relative; z-index: 2;
+  padding: 6rem 5vw;
+}
+.section-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 3rem;
+  gap: 1rem;
+}
+.section-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--green);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+h2 {
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.topics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+.topic-card {
+  background: var(--card);
+  padding: 2rem;
+  cursor: none;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+.topic-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(0,255,157,0.05) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.topic-card:hover { background: #161e27; }
+.topic-card:hover::before { opacity: 1; }
+.topic-card:hover .topic-icon { transform: scale(1.1) rotate(-5deg); }
+
+.topic-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--muted);
+  margin-bottom: 1rem;
+  letter-spacing: 0.15em;
+}
+.topic-icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  display: block;
+  transition: transform 0.3s;
+}
+.topic-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.topic-desc {
+  font-size: 0.85rem;
+  color: rgba(240,244,248,0.45);
+  line-height: 1.6;
+  margin-bottom: 1.2rem;
+}
+.topic-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 2px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.tag-beginner { background: rgba(0,255,157,0.1); color: var(--green); }
+.tag-inter    { background: rgba(0,207,255,0.1); color: var(--blue); }
+.tag-coming   { background: rgba(74,85,104,0.3); color: var(--muted); }
+
+/* ══ HOW IT WORKS ══ */
+.how-section {
+  position: relative; z-index: 2;
+  padding: 5rem 5vw;
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+.step {
+  text-align: center;
+  padding: 2rem 1.5rem;
+  position: relative;
+}
+.step-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: rgba(0,255,157,0.08);
+  display: block;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+.step-icon { font-size: 1.8rem; margin-bottom: 0.8rem; display: block; }
+.step-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.5rem; }
+.step-desc { font-size: 0.85rem; color: rgba(240,244,248,0.45); line-height: 1.6; }
+.step-arrow {
+  position: absolute;
+  right: -1rem; top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  font-size: 1.2rem;
+}
+
+/* ══ CTA SECTION ══ */
+.cta-section {
+  position: relative; z-index: 2;
+  padding: 7rem 5vw;
+  text-align: center;
+  overflow: hidden;
+}
+.cta-glow {
+  position: absolute;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(0,255,157,0.06) 0%, transparent 70%);
+  border-radius: 50%;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.cta-section h2 { margin-bottom: 1rem; }
+.cta-section p { color: rgba(240,244,248,0.5); margin-bottom: 2.5rem; font-size: 1.05rem; max-width: 450px; margin-left: auto; margin-right: auto; }
+
+/* ══ FOOTER ══ */
+footer {
+  position: relative; z-index: 2;
+  border-top: 1px solid var(--border);
+  padding: 2rem 5vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.footer-logo {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--green);
+}
+.footer-copy {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+}
+
+/* ══ TYPING ANIMATION ══ */
+@keyframes typing {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+/* ══ ENTRANCE ANIMATIONS ══ */
+.fade-up {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Staggered hero text */
+.hero-tag   { animation: fadeUp 0.6s 0.1s both; }
+h1          { animation: fadeUp 0.6s 0.25s both; }
+.hero-desc  { animation: fadeUp 0.6s 0.4s both; }
+.hero-btns  { animation: fadeUp 0.6s 0.55s both; }
+.hero-stage { animation: fadeUp 0.7s 0.3s both; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ══ RESPONSIVE ══ */
+@media (max-width: 768px) {
+  .hero {
+    grid-template-columns: 1fr;
+    text-align: center;
+    padding-top: 6rem;
+  }
+  .hero-stage { order: -1; min-height: 300px; }
+  .hero-desc { margin-left: auto; margin-right: auto; }
+  .hero-btns { justify-content: center; }
+  .hero-tag { justify-content: center; }
+  .stat-item { padding: 1rem; border-right: none; border-bottom: 1px solid var(--border); width: 50%; }
+  .speech-bubble { right: -10px; top: -30px; max-width: 180px; }
+  .stickman-img { width: 240px; }
+  nav { padding: 1rem 1.2rem; }
+  .nav-links { display: none; }
+  .step-arrow { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- Custom cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- Floating code tags in background -->
+<div class="float-tag">&lt;div&gt;</div>
+<div class="float-tag">console.log()</div>
+<div class="float-tag">{ css }</div>
+<div class="float-tag">fn() =&gt; {}</div>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="nav-logo">&lt;<span>DivGuy</span> /&gt;</div>
+  <ul class="nav-links">
+    <li><a href="#topics">Topics</a></li>
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#start">Start</a></li>
+  </ul>
+  <button class="nav-cta">Start Learning</button>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-text">
+    <div class="hero-tag">// Your coolest coding tutor</div>
+    <h1>
+      Learn to<br>
+      <span class="accent">Code.</span><br>
+      <span class="line2">No fluff.</span>
+    </h1>
+    <p class="hero-desc">
+      The Div Guy breaks down web dev concepts — HTML, CSS, JavaScript and more —
+      with zero boring lectures and maximum swagger. 😎
+    </p>
+    <div class="hero-btns">
+      <a href="#topics" class="btn-primary">Start Learning →</a>
+      <a href="#how" class="btn-ghost">See How It Works</a>
+    </div>
+  </div>
+
+  <div class="hero-stage">
+    <div class="stage-glow"></div>
+
+    <div class="stickman-wrap">
+      <!-- Speech bubble cycles through messages -->
+      <div class="speech-bubble" id="bubble">
+        <div class="bubble-text" id="bubbleText">
+          Hey! I'm <span class="highlight">The Div Guy</span>.<br>Let's learn to code! 🚀<span class="bubble-cursor"></span>
+        </div>
+      </div>
+      <img src="insta 2.png" alt="The Div Guy" class="stickman-img" />
+    </div>
+  </div>
+</section>
+
+<!-- ── STATS ── -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <span class="stat-num" data-target="10">0</span>
+    <span class="stat-label">Topics Coming</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-num" data-target="100">0</span>
+    <span class="stat-label">% Free</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-num" data-target="0">0</span>
+    <span class="stat-label">Boring Lectures</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-num">∞</span>
+    <span class="stat-label">Cool Factor</span>
+  </div>
+</div>
+
+<!-- ── TOPICS ── -->
+<section class="section" id="topics">
+  <div class="section-header">
+    <div>
+      <div class="section-tag">// what you'll learn</div>
+      <h2>Pick Your Topic,<br>The Div Guy's Got You.</h2>
+    </div>
+  </div>
+
+  <div class="topics-grid">
+    <div class="topic-card fade-up">
+      <div class="topic-num">01 //</div>
+      <span class="topic-icon">🌐</span>
+      <div class="topic-title">HTML Basics</div>
+      <div class="topic-desc">Tags, structure, and why everything is a box. Your first step into the web.</div>
+      <span class="topic-tag tag-beginner">Beginner</span>
+    </div>
+    <div class="topic-card fade-up">
+      <div class="topic-num">02 //</div>
+      <span class="topic-icon">🎨</span>
+      <div class="topic-title">CSS Magic</div>
+      <div class="topic-desc">Make things look good. Colors, layouts, animations — the art side of code.</div>
+      <span class="topic-tag tag-beginner">Beginner</span>
+    </div>
+    <div class="topic-card fade-up">
+      <div class="topic-num">03 //</div>
+      <span class="topic-icon">⚡</span>
+      <div class="topic-title">JavaScript</div>
+      <div class="topic-desc">Make your pages actually DO stuff. Variables, functions, and logic.</div>
+      <span class="topic-tag tag-inter">Intermediate</span>
+    </div>
+    <div class="topic-card fade-up">
+      <div class="topic-num">04 //</div>
+      <span class="topic-icon">📦</span>
+      <div class="topic-title">Flexbox & Grid</div>
+      <div class="topic-desc">Stop fighting layouts. The Div Guy will show you exactly how it works.</div>
+      <span class="topic-tag tag-beginner">Beginner</span>
+    </div>
+    <div class="topic-card fade-up">
+      <div class="topic-num">05 //</div>
+      <span class="topic-icon">🔗</span>
+      <div class="topic-title">How the Internet Works</div>
+      <div class="topic-desc">Servers, browsers, DNS — the invisible stuff that runs the web.</div>
+      <span class="topic-tag tag-beginner">Beginner</span>
+    </div>
+    <div class="topic-card fade-up">
+      <div class="topic-num">06 //</div>
+      <span class="topic-icon">🛠️</span>
+      <div class="topic-title">Your Custom Topics</div>
+      <div class="topic-desc">Got something specific in mind? The Div Guy covers what YOU want to learn.</div>
+      <span class="topic-tag tag-coming">Coming Soon</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ── -->
+<div class="how-section" id="how">
+  <div class="section-tag" style="text-align:center; margin-bottom:0.5rem;">// the process</div>
+  <h2 style="text-align:center;">How The Div Guy Teaches</h2>
+  <div class="steps">
+    <div class="step fade-up">
+      <span class="step-num">01</span>
+      <span class="step-icon">👆</span>
+      <div class="step-title">Pick a Topic</div>
+      <div class="step-desc">Choose what you want to learn from the topic list above.</div>
+      <span class="step-arrow">→</span>
+    </div>
+    <div class="step fade-up">
+      <span class="step-num">02</span>
+      <span class="step-icon">🧑‍💻</span>
+      <div class="step-title">Watch & Read</div>
+      <div class="step-desc">The Div Guy explains with animations and speech bubbles — no voice needed.</div>
+      <span class="step-arrow">→</span>
+    </div>
+    <div class="step fade-up">
+      <span class="step-num">03</span>
+      <span class="step-icon">💡</span>
+      <div class="step-title">Understand It</div>
+      <div class="step-desc">Concepts are broken into tiny, digestible steps with live code examples.</div>
+      <span class="step-arrow">→</span>
+    </div>
+    <div class="step fade-up">
+      <span class="step-num">04</span>
+      <span class="step-icon">🚀</span>
+      <div class="step-title">Build Stuff</div>
+      <div class="step-desc">Apply what you learned. Projects. Code. The real thing.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── CTA ── -->
+<section class="cta-section" id="start">
+  <div class="cta-glow"></div>
+  <div class="section-tag">// let's go</div>
+  <h2>Ready to Start?</h2>
+  <p>No sign-up. No paywall. Just The Div Guy and your browser.</p>
+  <a href="#topics" class="btn-primary">Pick Your First Topic →</a>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-logo">&lt;DivGuy /&gt;</div>
+  <div class="footer-copy">© 2025 The Div Guy · Learn to Code, The Cool Way</div>
+</footer>
+
+<script>
+// Custom cursor
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cursor.style.left = mx - 6 + 'px';
+  cursor.style.top  = my - 6 + 'px';
+});
+function animRing() {
+  rx += (mx - rx - 18) * 0.12;
+  ry += (my - ry - 18) * 0.12;
+  ring.style.left = rx + 'px';
+  ring.style.top  = ry + 'px';
+  requestAnimationFrame(animRing);
+}
+animRing();
+
+// Speech bubble messages cycling
+const messages = [
+  `Hey! I'm <span class="highlight">The Div Guy</span>.<br>Let's learn to code! 🚀<span class="bubble-cursor"></span>`,
+  `<span class="code-inline">&lt;div&gt;</span> is literally<br>the most important<br>HTML tag. Trust me. 😎<span class="bubble-cursor"></span>`,
+  `CSS is not scary.<br>It's just <span class="highlight">art</span><br>for nerds. 🎨<span class="bubble-cursor"></span>`,
+  `Pick a topic below<br>and I'll break it<br>down for you! 👇<span class="bubble-cursor"></span>`,
+];
+let msgIdx = 0;
+const bubbleText = document.getElementById('bubbleText');
+const bubble = document.getElementById('bubble');
+
+function cycleBubble() {
+  bubble.style.animation = 'none';
+  bubble.style.opacity = '0';
+  bubble.style.transform = 'scale(0.85)';
+  setTimeout(() => {
+    msgIdx = (msgIdx + 1) % messages.length;
+    bubbleText.innerHTML = messages[msgIdx];
+    bubble.style.transition = 'opacity 0.3s, transform 0.3s cubic-bezier(0.34,1.56,0.64,1)';
+    bubble.style.opacity = '1';
+    bubble.style.transform = 'scale(1)';
+  }, 300);
+}
+setInterval(cycleBubble, 3500);
+
+// Scroll-triggered fade-ups
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.15 });
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+// Count-up for stats
+function countUp(el, target, duration = 1200) {
+  let start = 0;
+  const step = target / (duration / 16);
+  const timer = setInterval(() => {
+    start += step;
+    if (start >= target) { el.textContent = target; clearInterval(timer); return; }
+    el.textContent = Math.floor(start);
+  }, 16);
+}
+const statObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const target = +e.target.dataset.target;
+      if (!isNaN(target)) countUp(e.target, target);
+      statObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.5 });
+document.querySelectorAll('[data-target]').forEach(el => statObserver.observe(el));
+</script>
+</body>
+</html>
