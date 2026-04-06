@@ -8,7 +8,7 @@ Each project reflects my **progress, consistency, and hands-on practice**.
 ## 👨‍💻 About Me
 - 🎓 CSE Student (Started: 2024)
 - 💻 Aspiring Full-Stack Developer
-- 📍 Bengaluru, India
+- 📍 Ballari, India
 - 🌱 Learning by building real-world projects
 
 ---
